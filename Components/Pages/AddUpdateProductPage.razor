@@ -1,9 +1,12 @@
 @page "/addupdateproduct"
 @page "/updateproduct/{ProductId:int}"
 @using SmartLine.Services.ProductService
-@using SmartLine.Data
+@using SmartLine.Services.AlertService
+@using SmartLine.Model
+
 @inject IProductRepository _productRepository
 @inject NavigationManager navigationManager
+@inject IAlertService alertService
 
 <h3>Add Update Product</h3>
 
@@ -41,8 +44,8 @@
         if (productId>0)
         {
             var response = await _productRepository.GetProductAsync(productId);
-            productName = response.Name;
-            prodQty = response.Quantity;
+            productName = response?.Name ?? "";
+            prodQty = response?.Quantity ?? 0;
             this.StateHasChanged();
         }
     }
@@ -58,17 +61,17 @@
         {
             if (productId == 0)
             {
-                await App.Current.MainPage.DisplayAlert("Saved", "Save Success", "OK");
+                await alertService.ShowAlertAsync("Saved", "Save Success", "OK");
             }
             else
             {
-                await App.Current.MainPage.DisplayAlert("Updated", "Update Success", "OK");
+                await alertService.ShowAlertAsync("Updated", "Update Success", "OK");
             }
             navigationManager.NavigateTo("prodList");
         }
         else
         {
-            await App.Current.MainPage.DisplayAlert("Saved", "Save Failed", "OK");
+            await alertService.ShowAlertAsync("Saved", "Save Failed", "OK");
         }
     }
 

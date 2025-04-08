@@ -1,6 +1,6 @@
 @page "/prodList"
 @using SmartLine.Services.ProductService
-@using SmartLine.Data
+@using SmartLine.Model
 @inject IProductRepository _productRepository
 @inject NavigationManager navigationManager
 
@@ -41,7 +41,7 @@ else
 
 @code
 {
-    private IEnumerable<ProductInfo> prodList;
+    private IEnumerable<ProductInfo>? prodList;
     protected override async Task OnInitializedAsync()
     {
         prodList = await _productRepository.GetProductAsync();

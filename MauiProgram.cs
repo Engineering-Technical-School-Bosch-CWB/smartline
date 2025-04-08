@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using SmartLine.Services.AlertService;
 using SmartLine.Services.ProductService;
 
 namespace SmartLine;
@@ -26,6 +27,8 @@ public static class MauiProgram
 			@"ProductDB.db3"
 		);
 		builder.Services.AddSingleton<IProductRepository, ProductService>(p=>ActivatorUtilities.CreateInstance<ProductService>(p,dbPath));
+
+		builder.Services.AddSingleton<IAlertService, AlertService>();
 
 		return builder.Build();
 	}

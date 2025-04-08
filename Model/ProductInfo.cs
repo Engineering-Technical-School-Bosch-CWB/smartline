@@ -1,11 +1,11 @@
 using SQLite;
 
-namespace SmartLine.Data;
+namespace SmartLine.Model;
 
 public class ProductInfo
 {
     [PrimaryKey, AutoIncrement]
     public int Id { get; set; }
-    public string Name { get; set; }
+    public string? Name { get; set; }
     public int Quantity { get; set; }
 }

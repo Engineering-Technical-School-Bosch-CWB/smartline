@@ -1,0 +1,23 @@
+namespace SmartLine.Services.ProductService;
+
+using SmartLine.Model;
+
+public static class TiposDePerda
+{
+    public static List<TipoDePerda> tipoDePerdas =
+    [
+        new TipoDePerda("Diálogo aberto", true),
+        new TipoDePerda("Liberação", true),
+        new TipoDePerda("Laboral", true),
+        new TipoDePerda("Limpeza / Parada Planejada", true),
+        new TipoDePerda("Refeição", true),
+        new TipoDePerda("TPM / Preventivas / Planejadas", false),
+        new TipoDePerda("SFC", false),
+        new TipoDePerda("Compensação", false),
+        new TipoDePerda("E.E / Projetos", false),
+    ];
+
+    public static TipoDePerda Get(string nome) => 
+        tipoDePerdas.FirstOrDefault(tp => tp.Nome == nome) 
+        ?? throw new InvalidOperationException($"Tipo de perda '{nome}' não encontrado.");
+}

@@ -1,17 +1,12 @@
-using SmartLine.Data;
+using SmartLine.Model;
 using SQLite;
 
 namespace SmartLine.Services.ProductService;
 
-public class ProductService : IProductRepository
+public class ProductService(string dbPath) : IProductRepository
 {
-    public SQLiteAsyncConnection _database;
-    string _dbPath;
-
-    public ProductService(string dbPath)
-    {
-        _dbPath = dbPath;
-    }
+    public required SQLiteAsyncConnection _database;
+    string _dbPath = dbPath;
 
     private async Task InitAsync()
     {

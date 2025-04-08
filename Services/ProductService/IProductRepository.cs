@@ -1,4 +1,4 @@
-using SmartLine.Data;
+using SmartLine.Model;
 
 namespace SmartLine.Services.ProductService;
 
