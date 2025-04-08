@@ -11,7 +11,6 @@ public class ProductService : IProductRepository
     public ProductService(string dbPath)
     {
         _dbPath = dbPath;
-        InitAsync();
     }
 
     private async Task InitAsync()

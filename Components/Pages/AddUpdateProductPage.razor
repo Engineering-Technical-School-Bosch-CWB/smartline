@@ -1,7 +1,9 @@
 @page "/addupdateproduct"
+@page "/updateproduct/{ProductId:int}"
 @using SmartLine.Services.ProductService
 @using SmartLine.Data
 @inject IProductRepository _productRepository
+@inject NavigationManager navigationManager
 
 <h3>Add Update Product</h3>
 
@@ -20,13 +22,30 @@
             <input type="text" @bind="prodQty" class="form-control" placeholder="Product Qty">
         </div>
         <button type="submit" class="btn btn-sm btn-success" @onclick="AddProductInfo">Submit</button>
+        <button type="submit" class="btn btn-sm btn-info" @onclick="BackToList">Back</button>
     </div>
 </div>
 
 @code {
+    [Parameter]
+    public int ProductId { get; set; }
+
     private int productId=0;
     private string productName="";
     private int prodQty=0;
+
+    protected async override void OnInitialized()
+    {
+        base.OnInitialized();
+        productId = ProductId;
+        if (productId>0)
+        {
+            var response = await _productRepository.GetProductAsync(productId);
+            productName = response.Name;
+            prodQty = response.Quantity;
+            this.StateHasChanged();
+        }
+    }
 
     public async void AddProductInfo(){
         var prod = new ProductInfo();
@@ -45,10 +64,16 @@
             {
                 await App.Current.MainPage.DisplayAlert("Updated", "Update Success", "OK");
             }
+            navigationManager.NavigateTo("prodList");
         }
         else
         {
             await App.Current.MainPage.DisplayAlert("Saved", "Save Failed", "OK");
         }
+    }
+
+    public void BackToList()
+    {
+        navigationManager.NavigateTo("prodList");
     }
 }

@@ -21,7 +21,10 @@ public static class MauiProgram
 		builder.Logging.AddDebug();
 	#endif
 
-		var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"ProductDB.db3");
+		var dbPath = Path.Combine(
+			Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+			@"ProductDB.db3"
+		);
 		builder.Services.AddSingleton<IProductRepository, ProductService>(p=>ActivatorUtilities.CreateInstance<ProductService>(p,dbPath));
 
 		return builder.Build();
