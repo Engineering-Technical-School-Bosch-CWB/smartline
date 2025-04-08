@@ -1,0 +1,54 @@
+@page "/addupdateproduct"
+@using SmartLine.Services.ProductService
+@using SmartLine.Data
+@inject IProductRepository _productRepository
+
+<h3>Add Update Product</h3>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="mb-3">
+            <label for="form-label">Product Id:</label>
+            <input type="text" @bind="productId" class="form-control" placeholder="Product Id" readonly>
+        </div>
+        <div class="mb-3">
+            <label for="form-label">Product Name:</label>
+            <input type="text" @bind="productName" class="form-control" placeholder="Product Name">
+        </div>
+        <div class="mb-3">
+            <label for="form-label">Product Qty:</label>
+            <input type="text" @bind="prodQty" class="form-control" placeholder="Product Qty">
+        </div>
+        <button type="submit" class="btn btn-sm btn-success" @onclick="AddProductInfo">Submit</button>
+    </div>
+</div>
+
+@code {
+    private int productId=0;
+    private string productName="";
+    private int prodQty=0;
+
+    public async void AddProductInfo(){
+        var prod = new ProductInfo();
+        prod.Id = productId;
+        prod.Name = productName;
+        prod.Quantity = prodQty;
+
+        var response = await _productRepository.AddUpdateProductAsync(prod);
+        if (response)
+        {
+            if (productId == 0)
+            {
+                await App.Current.MainPage.DisplayAlert("Saved", "Save Success", "OK");
+            }
+            else
+            {
+                await App.Current.MainPage.DisplayAlert("Updated", "Update Success", "OK");
+            }
+        }
+        else
+        {
+            await App.Current.MainPage.DisplayAlert("Saved", "Save Failed", "OK");
+        }
+    }
+}

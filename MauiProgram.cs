@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using SmartLine.Services.ProductService;
 
 namespace SmartLine;
 
@@ -15,11 +16,13 @@ public static class MauiProgram
 			});
 
 		builder.Services.AddMauiBlazorWebView();
-
-#if DEBUG
+	#if DEBUG
 		builder.Services.AddBlazorWebViewDeveloperTools();
 		builder.Logging.AddDebug();
-#endif
+	#endif
+
+		var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"ProductDB.db3");
+		builder.Services.AddSingleton<IProductRepository, ProductService>(p=>ActivatorUtilities.CreateInstance<ProductService>(p,dbPath));
 
 		return builder.Build();
 	}
