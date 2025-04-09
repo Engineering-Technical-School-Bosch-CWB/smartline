@@ -2,7 +2,7 @@ using SQLite;
 
 namespace SmartLine.Model;
 
-public class TipoDePerda
+public class WasteType
 {
     [PrimaryKey, AutoIncrement]
     public int Id { get; set; }

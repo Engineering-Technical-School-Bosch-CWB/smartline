@@ -4,8 +4,8 @@ namespace SmartLine.Services.ProductService;
 
 public interface IProductRepository
 {
-    Task<bool> AddUpdateProductAsync(ProductInfo productInfo);
-    Task<bool> DeleteProductAsync(int prodId);
-    Task<ProductInfo> GetProductAsync(int prodId);
+    Task<bool> AddUpdateProductAsync(Product calendarDay);
+    Task<bool> DeleteProductAsync(int calendarId);
+    Task<ProductInfo> GetProductAsync(int calendarId);
     Task<IEnumerable<ProductInfo>> GetProductAsync();
 }

@@ -2,7 +2,7 @@ using SQLite;
 
 namespace SmartLine.Model;
 
-public class Produto
+public class Product
 {
     [PrimaryKey, AutoIncrement]
     public int Id { get; set; }
