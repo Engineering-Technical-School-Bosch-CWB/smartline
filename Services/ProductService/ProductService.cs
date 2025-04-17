@@ -1,29 +1,52 @@
-namespace SmartLine.Services.ProductService;
-
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SmartLine.Model;
 using SQLite;
 
-public class ProductService : IProductRepository
+namespace SmartLine.Services.ProductService;
+
+public class ProductService(string dbPath) : IProductRepository
 {
-    public Task<bool> AddUpdateProductAsync(Product calendarDay)
+    public required SQLiteAsyncConnection _database;
+    string _dbPath = dbPath;
+
+    private async Task InitAsync()
     {
-        throw new NotImplementedException();
+        if(_database != null)
+        {
+            return;
+        }
+        _database=new SQLiteAsyncConnection(_dbPath);
+        await _database.CreateTableAsync<Product>();
     }
 
-    public Task<bool> DeleteProductAsync(int calendarId)
+    public async Task<bool> AddUpdateProductAsync(Product productInfo)
     {
-        throw new NotImplementedException();
+        if (productInfo.Id > 0)
+        {
+            await _database.UpdateAsync(productInfo);
+        }
+        else
+        {
+            await _database.InsertAsync(productInfo);
+        }
+        return await Task.FromResult(true);
     }
 
-    public Task<ProductInfo> GetProductAsync(int calendarId)
+    public async Task<bool> DeleteProductAsync(int prodId)
     {
-        throw new NotImplementedException();
+        await _database.DeleteAsync<Product>(prodId);
+        return await Task.FromResult(true);
     }
 
-    public Task<IEnumerable<ProductInfo>> GetProductAsync()
+    public async Task<Product> GetProductAsync(int prodId)
     {
-        throw new NotImplementedException();
+        return await _database.Table<Product>().Where(p=>p.Id == prodId).FirstOrDefaultAsync();
+    }
+
+    public async Task<IEnumerable<Product>> GetProductAsync()
+    {
+        await InitAsync();
+        return await Task.FromResult(await _database.Table<Product>().ToListAsync());
     }
 }

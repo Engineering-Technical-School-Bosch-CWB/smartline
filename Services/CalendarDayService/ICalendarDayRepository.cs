@@ -6,6 +6,6 @@ public interface ICalendarDayRepository
 {
     Task<bool> AddUpdateCalendarDayAsync(CalendarDay calendarDay);
     Task<bool> DeleteCalendarDayAsync(int calendarId);
-    Task<ProductInfo> GetCalendarDayAsync(int calendarId);
-    Task<IEnumerable<ProductInfo>> GetCalendarDayAsync();
+    Task<Product> GetCalendarDayAsync(int calendarId);
+    Task<IEnumerable<Product>> GetCalendarDayAsync();
 }

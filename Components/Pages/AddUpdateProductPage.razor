@@ -21,8 +21,16 @@
             <input type="text" @bind="productName" class="form-control" placeholder="Product Name">
         </div>
         <div class="mb-3">
-            <label for="form-label">Product Qty:</label>
-            <input type="text" @bind="prodQty" class="form-control" placeholder="Product Qty">
+            <label for="form-label">Time Side A:</label>
+            <input type="text" @bind="timeSideA" class="form-control" placeholder="Time Side A">
+        </div>
+        <div class="mb-3">
+            <label for="form-label">Time Side B:</label>
+            <input type="text" @bind="timeSideB" class="form-control" placeholder="Time Side B">
+        </div>
+        <div class="mb-3">
+            <label for="form-label">Part Number:</label>
+            <input type="text" @bind="partNumber" class="form-control" placeholder="Part Number">
         </div>
         <button type="submit" class="btn btn-sm btn-success" @onclick="AddProductInfo">Submit</button>
         <button type="submit" class="btn btn-sm btn-info" @onclick="BackToList">Back</button>
@@ -32,10 +40,11 @@
 @code {
     [Parameter]
     public int ProductId { get; set; }
-
     private int productId=0;
     private string productName="";
-    private int prodQty=0;
+    private double timeSideA;
+    private double timeSideB;
+    private string partNumber="";
 
     protected async override void OnInitialized()
     {
@@ -45,16 +54,21 @@
         {
             var response = await _productRepository.GetProductAsync(productId);
             productName = response?.Name ?? "";
-            prodQty = response?.Quantity ?? 0;
+            timeSideA = response?.TimeSideA ?? 0;
+            timeSideB = response?.TimeSideB ?? 0;
+            partNumber = response?.PartNumber ?? "";
+
             this.StateHasChanged();
         }
     }
 
     public async void AddProductInfo(){
-        var prod = new ProductInfo();
+        var prod = new Product();
         prod.Id = productId;
         prod.Name = productName;
-        prod.Quantity = prodQty;
+        prod.TimeSideA = timeSideA;
+        prod.TimeSideB = timeSideB;
+        prod.PartNumber = partNumber;
 
         var response = await _productRepository.AddUpdateProductAsync(prod);
         if (response)

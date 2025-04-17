@@ -18,7 +18,9 @@ else
             <tr>
                 <th>ID</th>
                 <th>Name</th>
-                <th>Qty</th>
+                <th>Time Side A</th>
+                <th>Time Side B</th>
+                <th>Part Number</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -28,7 +30,9 @@ else
                 <tr>
                     <td>@prod.Id</td>
                     <td>@prod.Name</td>
-                    <td>@prod.Quantity</td>
+                    <td>@prod.TimeSideA</td>
+                    <td>@prod.TimeSideB</td>
+                    <td>@prod.PartNumber</td>
                     <td>
                         <button class="btn btn-info" @onclick=@(() => UpdateProduct(prod))>Edit</button>
                         <button class="btn btn-danger" @onclick=@(() => DeleteProduct(prod))>Delete</button>
@@ -41,7 +45,7 @@ else
 
 @code
 {
-    private IEnumerable<ProductInfo>? prodList;
+    private IEnumerable<Product>? prodList;
     protected override async Task OnInitializedAsync()
     {
         prodList = await _productRepository.GetProductAsync();
@@ -50,13 +54,13 @@ else
     {
         navigationManager.NavigateTo("addupdateproduct");
     }
-    public void UpdateProduct(ProductInfo productInfo)
+    public void UpdateProduct(Product product)
     {
-        navigationManager.NavigateTo($"updateproduct/{productInfo.Id}");
+        navigationManager.NavigateTo($"updateproduct/{product.Id}");
     }
-    public async void DeleteProduct(ProductInfo productInfo)
+    public async void DeleteProduct(Product product)
     {
-        await _productRepository.DeleteProductAsync(productInfo.Id);
+        await _productRepository.DeleteProductAsync(product.Id);
         prodList = await _productRepository.GetProductAsync();
         this.StateHasChanged();
     }

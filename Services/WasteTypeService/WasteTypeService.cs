@@ -14,12 +14,12 @@ public class WasteTypeService : IWasteTypeRepository
         throw new NotImplementedException();
     }
 
-    public Task<ProductInfo> GetWasteTypeAsync(int wasteTypeId)
+    public Task<Product> GetWasteTypeAsync(int wasteTypeId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<ProductInfo>> GetWasteTypeAsync()
+    public Task<IEnumerable<Product>> GetWasteTypeAsync()
     {
         throw new NotImplementedException();
     }

@@ -6,6 +6,6 @@ public interface IWasteTypeRepository
 {
     Task<bool> AddUpdateWasteTypeAsync(WasteType wasteType);
     Task<bool> DeleteWasteTypeAsync(int wasteTypeId);
-    Task<ProductInfo> GetWasteTypeAsync(int wasteTypeId);
-    Task<IEnumerable<ProductInfo>> GetWasteTypeAsync();
+    Task<Product> GetWasteTypeAsync(int wasteTypeId);
+    Task<IEnumerable<Product>> GetWasteTypeAsync();
 }

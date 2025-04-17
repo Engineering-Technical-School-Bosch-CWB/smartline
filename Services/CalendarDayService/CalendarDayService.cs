@@ -15,12 +15,22 @@ public class CalendarDayService : ICalendarDayRepository
         throw new NotImplementedException();
     }
 
-    public Task<ProductInfo> GetCalendarDayAsync(int calendarId)
+    public Task<Product> GetCalendarDayAsync(int calendarId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<ProductInfo>> GetCalendarDayAsync()
+    public Task<IEnumerable<Product>> GetCalendarDayAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<Product> ICalendarDayRepository.GetCalendarDayAsync(int calendarId)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<IEnumerable<Product>> ICalendarDayRepository.GetCalendarDayAsync()
     {
         throw new NotImplementedException();
     }
