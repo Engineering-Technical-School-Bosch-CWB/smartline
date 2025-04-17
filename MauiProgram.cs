@@ -23,7 +23,7 @@ public static class MauiProgram
 	#endif
 
 		var dbPath = Path.Combine(
-			Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+			@"S:\COM\Human_Resources\01.Engineering_Tech_School\02.Internal\5 - Aprendizes",
 			@"ProductDB.db3"
 		);
 		builder.Services.AddSingleton<IProductRepository, ProductService>(p=>ActivatorUtilities.CreateInstance<ProductService>(p,dbPath));
