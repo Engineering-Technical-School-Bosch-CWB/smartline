@@ -5,20 +5,9 @@ using SQLite;
 
 namespace SmartLine.Services.ProductService;
 
-public class ProductService(string dbPath) : IProductRepository
+public class ProductService(SQLiteAsyncConnection db) : IProductRepository
 {
-    public required SQLiteAsyncConnection _database;
-    string _dbPath = dbPath;
-
-    private async Task InitAsync()
-    {
-        if(_database != null)
-        {
-            return;
-        }
-        _database=new SQLiteAsyncConnection(_dbPath);
-        await _database.CreateTableAsync<Product>();
-    }
+    private readonly SQLiteAsyncConnection _database = db;
 
     public async Task<bool> AddUpdateProductAsync(Product productInfo)
     {
@@ -35,18 +24,16 @@ public class ProductService(string dbPath) : IProductRepository
 
     public async Task<bool> DeleteProductAsync(int prodId)
     {
-        await _database.DeleteAsync<Product>(prodId);
-        return await Task.FromResult(true);
+        return await _database.DeleteAsync<Product>(prodId).ContinueWith(_ => true);
     }
 
     public async Task<Product> GetProductAsync(int prodId)
     {
-        return await _database.Table<Product>().Where(p=>p.Id == prodId).FirstOrDefaultAsync();
+        return await _database.Table<Product>().Where(p => p.Id == prodId).FirstOrDefaultAsync();
     }
 
     public async Task<IEnumerable<Product>> GetProductAsync()
     {
-        await InitAsync();
-        return await Task.FromResult(await _database.Table<Product>().ToListAsync());
+        return await _database.Table<Product>().ToListAsync();
     }
 }

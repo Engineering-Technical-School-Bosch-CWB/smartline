@@ -45,7 +45,7 @@ else
 
 @code
 {
-    private IEnumerable<Product>? prodList;
+    private IEnumerable<SmartLine.Model.Product>? prodList;
     protected override async Task OnInitializedAsync()
     {
         prodList = await _productRepository.GetProductAsync();

@@ -1,16 +1,64 @@
 ﻿@page "/demand"
+@using SmartLine.Services.DemandService
+@using SmartLine.Model
+@inject IDemandRepository _demandRepository
+@inject NavigationManager navigationManager
 
 <h1>Demanda</h1>
 
-<p role="status">Current count: @currentCount</p>
+@if (demandList == null)
+{
+    <p><em>Carregando...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Produto</th>
+                <th>Demanda</th>
+                <th>Giro Atual</th>
+                <th>Prazo</th>
+                <th>Editar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var demand in demandList)
+            {
+                <tr>
+                    <td>#</td>
+                    <td>@demand.ProductId</td>
+                    <td>@demand.Stock</td>
+                    <td>@demand.DemandProduct</td>
+                    <td>@demand.DeadLine</td>
+                    <td>
+                        <button class="btn btn-info" @onclick=@(() => UpdateDemand(demand))>Edit</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+    <button class="btn btn-primary" @onclick="CreateDemand">Nova Demanda</button>
+}
 
-@code {
-    private int currentCount = 0;
-
-    private void IncrementCount()
+@code
+{
+    private IEnumerable<SmartLine.Model.Demand>? demandList;
+    
+    protected override async Task OnInitializedAsync()
     {
-        currentCount++;
+        demandList = await _demandRepository.GetDemandAsync();
+    }
+
+    public void CreateDemand()
+    {
+
+    }
+
+    public void UpdateDemand(SmartLine.Model.Demand demand)
+    {
+        //navigationManager.NavigateTo($"updateproduct/{product.Id}");
     }
 }
