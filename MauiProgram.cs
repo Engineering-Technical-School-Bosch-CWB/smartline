@@ -19,10 +19,10 @@ public static class MauiProgram
 			});
 
 		builder.Services.AddMauiBlazorWebView();
-	#if DEBUG
-		builder.Services.AddBlazorWebViewDeveloperTools();
-		builder.Logging.AddDebug();
-	#endif
+		#if DEBUG
+			builder.Services.AddBlazorWebViewDeveloperTools();
+			builder.Logging.AddDebug();
+		#endif
 
 		var dbPath = Path.Combine(
 			@"S:\COM\Human_Resources\01.Engineering_Tech_School\02.Internal\5 - Aprendizes",
@@ -32,8 +32,17 @@ public static class MauiProgram
 		// Adiciona o DatabaseService singleton
 		builder.Services.AddSingleton(new DatabaseService(dbPath));
 
-		builder.Services.AddSingleton<IDemandRepository, DemandService>(p=>ActivatorUtilities.CreateInstance<DemandService>(p,dbPath));
-		builder.Services.AddSingleton<IProductRepository, ProductService>(p=>ActivatorUtilities.CreateInstance<ProductService>(p,dbPath));
+		builder.Services.AddSingleton<IDemandRepository, DemandService>(p =>
+		{
+			var dbService = p.GetRequiredService<DatabaseService>();
+			return new DemandService(dbService.GetConnection());
+		});
+
+		builder.Services.AddSingleton<IProductRepository, ProductService>(p =>
+		{
+			var dbService = p.GetRequiredService<DatabaseService>();
+			return new ProductService(dbService.GetConnection());
+		});
 
 		builder.Services.AddSingleton<IAlertService, AlertService>();
 

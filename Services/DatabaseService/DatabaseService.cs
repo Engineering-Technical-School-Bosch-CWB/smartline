@@ -10,7 +10,7 @@ public class DatabaseService
     public DatabaseService(string dbPath)
     {
         _database = new SQLiteAsyncConnection(dbPath);
-        InitAsync().Wait();
+        Task.Run(async () => await InitAsync()).Wait();
     }
 
     public SQLiteAsyncConnection GetConnection() => _database;
