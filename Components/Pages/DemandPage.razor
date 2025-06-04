@@ -1,6 +1,9 @@
 ﻿@page "/demand"
+@using SmartLine.Services.AlertService
 @using SmartLine.Services.DemandService
 @using SmartLine.Model
+
+@inject IAlertService AlertService
 @inject IDemandRepository _demandRepository
 @inject NavigationManager navigationManager
 
@@ -12,92 +15,95 @@
 }
 else
 {
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Produto</th>
-                <th>Demanda</th>
-                <th>Giro Atual</th>
-                <th>Prazo</th>
-                <th>Editar</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var demand in demandList)
-            {
+    <div class="scroll-table">
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <td>#</td>
-                    <td>@demand.ProductId</td>
-                    <td>
-                        @if (editMode.Contains(demand.Id))
-                        {
-                            <input @bind="demand.ProductId" class="form-control" />
-                        }
-                        else
-                        {
-                            @demand.ProductId
-                        }
-                    </td>
-                    <td>
-                        @if (editMode.Contains(demand.Id))
-                        {
-                            <input @bind="demand.Stock" class="form-control" />
-                        }
-                        else
-                        {
-                            @demand.Stock
-                        }
-                    </td>
-                    <td>
-                        @if (editMode.Contains(demand.Id))
-                        {
-                            <input @bind="demand.DemandProduct" class="form-control" />
-                        }
-                        else
-                        {
-                            @demand.DemandProduct
-                        }
-                    </td>
-                    <td>
-                        @if (editMode.Contains(demand.Id))
-                        {
-                            <input type="date" @bind="demand.DeadLine" class="form-control" />
-                        }
-                        else
-                        {
-                            @demand.DeadLine.ToShortDateString()
-                        }
-                    </td>
-                    <td>
-                        @if (editMode.Contains(demand.Id))
-                        {
-                            <button class="btn btn-success" @onclick="() => SaveDemand(demand)">Salvar</button>
-                        }
-                        else
-                        {
-                            <button class="btn btn-info" @onclick="() => EditDemand(demand)">Editar</button>
-                        }
-                    </td>
+                    <th>#</th>
+                    <th>Produto</th>
+                    <th>Demanda</th>
+                    <th>Giro Atual</th>
+                    <th>Prazo</th>
+                    <th>Editar</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var demand in demandList.Select((value, index) => new { value, index }))
+                {
+                    <tr>
+                        <td>@(demand.index + 1)</td>
+                        <td>
+                            @if (editMode.Contains(demand.value.Id))
+                            {
+                                <input @bind="demand.value.ProductId" class="form-control fixed-input" />
+                            }
+                            else
+                            {
+                                @demand.value.ProductId
+                            }
+                        </td>
+                        <td>
+                            @if (editMode.Contains(demand.value.Id))
+                            {
+                                <input @bind="demand.value.Stock" class="form-control fixed-input" />
+                            }
+                            else
+                            {
+                                @demand.value.Stock
+                            }
+                        </td>
+                        <td>
+                            @if (editMode.Contains(demand.value.Id))
+                            {
+                                <input @bind="demand.value.DemandProduct" class="form-control fixed-input" />
+                            }
+                            else
+                            {
+                                @demand.value.DemandProduct
+                            }
+                        </td>
+                        <td>
+                            @if (editMode.Contains(demand.value.Id))
+                            {
+                                <input type="date" @bind="demand.value.DeadLine" class="form-control fixed-input" />
+                            }
+                            else
+                            {
+                                @demand.value.DeadLine.ToShortDateString()
+                            }
+                        </td>
+                        <td>
+                            @if (editMode.Contains(demand.value.Id))
+                            {
+                                <button class="btn btn-success" @onclick="() => SaveDemand(demand.value)">Salvar</button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-info" @onclick="() => EditDemand(demand.value)">Editar</button>
+                                <button class="btn btn-danger" @onclick="() => DeleteDemand(demand.value)">Excluir</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
-    <button class="btn btn-primary" @onclick="CreateDemand">Nova Demanda</button>
+    <button class="btn btn-primary mt-3" @onclick="CreateDemand">Nova Demanda</button>
 }
+
 
 @code
 {
     private List<SmartLine.Model.Demand> demandList = new();
-    private HashSet<int> editMode = new(); // IDs em modo de edição
-    
+    private HashSet<int> editMode = new();
+
     protected override async Task OnInitializedAsync()
     {
         demandList = (await _demandRepository.GetDemandAsync()).ToList();
     }
 
-    public void CreateDemand()
+    public async Task CreateDemand()
     {
         var newDemand = new Demand
         {
@@ -107,13 +113,18 @@ else
             DeadLine = DateTime.Today
         };
 
-        // Adiciona no início da lista
-        demandList.Insert(0, newDemand);
+        // Salva imediatamente para obter o ID real
+        await _demandRepository.AddUpdateDemandAsync(newDemand);
 
-        // Usa um id negativo temporário para evitar conflito com já existentes
-        editMode.Add(newDemand.GetHashCode());
+        // Recarrega a lista completa com o novo registro
+        demandList = (await _demandRepository.GetDemandAsync()).ToList();
+
+        // Ativa o modo de edição só no novo
+        editMode.Clear();
+        editMode.Add(newDemand.Id);
+
+        StateHasChanged();
     }
-
 
     public void EditDemand(Demand demand)
     {
@@ -124,14 +135,25 @@ else
     {
         await _demandRepository.AddUpdateDemandAsync(demand);
         editMode.Remove(demand.Id);
+        StateHasChanged();
+    }
 
-        // Se era novo (Id = 0), precisamos recarregar a lista para obter o ID real
-        if (demand.Id == 0)
-        {
-            demandList = (await _demandRepository.GetDemandAsync()).ToList();
-        }
+    public async Task DeleteDemand(Demand demand)
+    {
+        bool confirm = await AlertService.ShowConfirmAsync(
+            "Confirmar Exclusão",
+            $"Tem certeza que deseja excluir a demanda do produto {demand.ProductId}?",
+            "Sim", "Cancelar"
+        );
+
+        if (!confirm) return;
+
+        await _demandRepository.DeleteDemandAsync(demand.Id);
+        demandList.Remove(demand);
+        editMode.Remove(demand.Id);
 
         StateHasChanged();
     }
+
 
 }
