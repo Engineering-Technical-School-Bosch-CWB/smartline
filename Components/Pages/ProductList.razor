@@ -1,6 +1,9 @@
 @page "/prodList"
 @using SmartLine.Services.ProductService
 @using SmartLine.Model
+
+@using SmartLine.Components.Shared.ConfirmButton
+
 @inject IProductRepository _productRepository
 @inject NavigationManager navigationManager
 
@@ -12,7 +15,6 @@
 }
 else
 {
-    <button class="btn btn-primary" @onclick="AddNewProduct">Add New</button>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -41,6 +43,8 @@ else
             }
         </tbody>
     </table>
+
+    <ConfirmButton Text="Novo Produto" OnClick="AddNewProduct" />
 }
 
 @code
@@ -52,7 +56,7 @@ else
     }
     public void AddNewProduct()
     {
-        navigationManager.NavigateTo("addupdateproduct");
+        navigationManager.NavigateTo("newProduct");
     }
     public void UpdateProduct(Product product)
     {

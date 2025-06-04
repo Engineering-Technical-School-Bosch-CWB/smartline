@@ -1,0 +1,27 @@
+.confirm-button {
+    background-color: #007bc0;
+    cursor: pointer;
+    border: 0;
+    color: #ffffff;
+    border-radius: 0;
+    padding: .75rem 1rem;
+    margin: auto;
+    display: inline-flex;
+    letter-spacing: 0;
+
+    font-size: 1rem;
+    font-weight: 400;
+    --font-size: 1rem;
+    line-height: 1.5;
+
+    font-family: inherit;
+    text-transform: none;
+
+    overflow: visible;
+}
+
+.confirm-button:hover
+{
+    background-color: #00629A;
+}
+
