@@ -1,0 +1,27 @@
+<label for="inp" class="inp">
+  <input id="inp" placeholder=" " @bind="Value" />
+  <span class="label">@Text</span>
+  <span class="focus-bg"></span>
+</label>
+
+@code {
+    [Parameter] public string Text { get; set; } = "Digite algo";
+    
+    private string _value = "";
+
+    [Parameter]
+    public string? Value
+    {
+        get => _value;
+        set
+        {
+            if (_value != value)
+            {
+                _value = value ?? "";
+                ValueChanged.InvokeAsync(_value);
+            }
+        }
+    }
+
+    [Parameter] public EventCallback<string> ValueChanged { get; set; }
+}

@@ -1,0 +1,104 @@
+@page "/newProduct"
+@page "/updateproduct/{ProductId:int}"
+@using SmartLine.Services.AlertService
+@using SmartLine.Services.ProductService
+@using SmartLine.Model
+
+@using SmartLine.Components.Shared.ConfirmButton
+@using SmartLine.Components.Shared.TextInput
+
+@inject IAlertService AlertService
+@inject IProductRepository _productRepository
+@inject NavigationManager navigationManager
+
+<h2>Demanda</h2>
+
+<form action="">
+    <div style="display: flex;">
+        <div>
+            <TextInput @bind-Value="productName" Text="Nome" />
+            <TextInput @bind-Value="partNumber" Text="Part Number" />
+
+            <div style="">
+                <p>Modelo de trabalho</p>
+                <input type="radio" id="padrao" name="work-model" value="padrao" />
+                <label for="padrao">Padrão</label>
+                <br>
+                <input type="radio" id="dedicado" name="work-model" value="dedicado" />
+                <label for="dedicado">Dedicado</label>
+                <br>
+                <input type="radio" id="ambos" name="work-model" value="ambos" />
+                <label for="ambos">Ambos</label>
+            </div>
+
+
+            <p>Células restritas</p>
+            <ConfirmButton Text="Adicionar célula" OnClick="NewCell" />
+        </div>
+        <div>
+            Células muito loucas
+
+            <ConfirmButton Text="Salvar" OnClick="AddNewProductInfo" />
+            <ConfirmButton Text="Cancelar" OnClick="Cancel" />
+        </div>
+    </div>
+</form>
+
+
+@code
+{
+    [Parameter]
+    public int ProductId { get; set; }
+    private int productId=0;
+    private string productName="";
+    private string partNumber="";
+
+    protected async override Task OnInitializedAsync()
+    {
+        productId = ProductId;
+        if (productId>0)
+        {
+            var response = await _productRepository.GetProductAsync(productId);
+            productName = response?.Name ?? "";
+            partNumber = response?.PartNumber ?? "";
+
+            this.StateHasChanged();
+        }
+    }
+
+    public async void AddNewProductInfo()
+    {
+        var prod = new Product();
+        prod.Id = productId;
+        prod.Name = productName;
+        prod.PartNumber = partNumber;
+
+        var response = await _productRepository.AddUpdateProductAsync(prod);
+        if (response)
+        {
+            if (productId == 0)
+            {
+                await AlertService.ShowAlertAsync("Salvo", "Salvo com sucesso", "OK");
+            }
+            else
+            {
+                await AlertService.ShowAlertAsync("Atualizado", "Atualizado com sucesso", "OK");
+            }
+            navigationManager.NavigateTo("prodList");
+        }
+        else
+        {
+            await AlertService.ShowAlertAsync("Erro", "Não foi possível salvar", "OK");
+        }
+    }
+
+    public void NewCell()
+    {
+
+    }
+
+    public void Cancel()
+    {
+        navigationManager.NavigateTo("prodList", true);
+    }
+}
